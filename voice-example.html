@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Input System - Simple Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .question-section.active {
+            display: block;
+        }
+
+        .question-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-voice {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-voice:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-voice:active {
+            transform: translateY(0);
+        }
+
+        .btn-voice.listening {
+            background: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+        }
+
+        .btn-stop {
+            background: #ee5a6f;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-stop:hover {
+            background: #dd4a5f;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .status-box {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #666;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-box.listening {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+            color: #ff6b6b;
+        }
+
+        .status-box.success {
+            border-color: #51cf66;
+            background: #f1fce4;
+            color: #51cf66;
+        }
+
+        .status-box.error {
+            border-color: #ff6b6b;
+            background: #ffe3e3;
+            color: #ff6b6b;
+        }
+
+        .recognized-text {
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .console-output {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .console-line {
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .console-info {
+            color: #87ceeb;
+        }
+
+        .console-success {
+            color: #00ff00;
+        }
+
+        .console-error {
+            color: #ff6b6b;
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .progress-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-dot.completed {
+            background: #51cf66;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Voice Input System</h1>
+        <p class="subtitle">Simple JavaScript example with Web Speech API</p>
+
+        <div class="progress-indicator">
+            <div class="progress-dot active" id="dot-0">1</div>
+            <div class="progress-dot" id="dot-1">2</div>
+            <div class="progress-dot" id="dot-2">3</div>
+            <div class="progress-dot" id="dot-3">4</div>
+        </div>
+
+        <!-- Question 1: Soil -->
+        <div class="question-section active" id="question-0">
+            <div class="question-label">🌱 Select Soil Type</div>
+            <p style="color: #999; font-size: 12px; margin-bottom: 15px;">Click the microphone button and say a soil type</p>
+            <div class="button-group">
+                <button class="btn-voice" onclick="startVoiceInput(0)">🎤 Start Listening</button>
+                <button class="btn-stop" onclick="stopVoiceInput()">⏹ Stop</button>
+            </div>
+            <div class="status-box" id="status-0">
+                Ready to listen for soil type...
+            </div>
+            <select id="dropdown-0" onchange="handleDropdownChange(0)">
+                <option value="">-- Choose Option --</option>
+                <option value="Alluvial">Alluvial</option>
+                <option value="Black">Black</option>
+                <option value="Red">Red</option>
+                <option value="Laterite">Laterite</option>
+                <option value="Sandy">Sandy</option>
+            </select>
+        </div>
+
+        <!-- Question 2: Water -->
+        <div class="question-section" id="question-1">
+            <div class="question-label">💧 Select Water Facility</div>
+            <p style="color: #999; font-size: 12px; margin-bottom: 15px;">Click the microphone button and say a water source</p>
+            <div class="button-group">
+                <button class="btn-voice" onclick="startVoiceInput(1)">🎤 Start Listening</button>
+                <button class="btn-stop" onclick="stopVoiceInput()">⏹ Stop</button>
+            </div>
+            <div class="status-box" id="status-1">
+                Ready to listen for water facility...
+            </div>
+            <select id="dropdown-1" onchange="handleDropdownChange(1)">
+                <option value="">-- Choose Option --</option>
+                <option value="Well/Borewell">Well/Borewell</option>
+                <option value="River/Canal">River/Canal</option>
+                <option value="Rainwater">Rainwater/Monsoon</option>
+                <option value="Tube Well">Tube Well</option>
+                <option value="Pond/Tank">Pond/Tank</option>
+            </select>
+        </div>
+
+        <!-- Question 3: Crop -->
+        <div class="question-section" id="question-2">
+            <div class="question-label">🌾 Select Crop</div>
+            <p style="color: #999; font-size: 12px; margin-bottom: 15px;">Click the microphone button and say a crop name</p>
+            <div class="button-group">
+                <button class="btn-voice" onclick="startVoiceInput(2)">🎤 Start Listening</button>
+                <button class="btn-stop" onclick="stopVoiceInput()">⏹ Stop</button>
+            </div>
+            <div class="status-box" id="status-2">
+                Ready to listen for crop...
+            </div>
+            <select id="dropdown-2" onchange="handleDropdownChange(2)">
+                <option value="">-- Choose Option --</option>
+                <option value="Rice">Rice</option>
+                <option value="Wheat">Wheat</option>
+                <option value="Maize">Maize</option>
+                <option value="Sugarcane">Sugarcane</option>
+                <option value="Cotton">Cotton</option>
+                <option value="Vegetables">Vegetables</option>
+            </select>
+        </div>
+
+        <!-- Question 4: Seeds -->
+        <div class="question-section" id="question-3">
+            <div class="question-label">🌱 Select Seed Type</div>
+            <p style="color: #999; font-size: 12px; margin-bottom: 15px;">Click the microphone button and say a seed type</p>
+            <div class="button-group">
+                <button class="btn-voice" onclick="startVoiceInput(3)">🎤 Start Listening</button>
+                <button class="btn-stop" onclick="stopVoiceInput()">⏹ Stop</button>
+            </div>
+            <div class="status-box" id="status-3">
+                Ready to listen for seed type...
+            </div>
+            <select id="dropdown-3" onchange="handleDropdownChange(3)">
+                <option value="">-- Choose Option --</option>
+                <option value="Local">Local</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="High-yield">High-yield</option>
+            </select>
+        </div>
+
+        <!-- Console Output -->
+        <div class="console-output" id="console">
+            <div class="console-line console-info">// Console output will appear here</div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 5px; font-size: 12px;">
+            <div style="font-weight: 600; margin-bottom: 10px;">DEBUG: Dropdown States</div>
+            <div id="debug-info" style="font-family: monospace; color: #333; line-height: 1.6;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - MUST match dropdown option values in HTML
+        const questions = [
+            { id: 0, name: 'Soil Type', options: ['Alluvial', 'Black', 'Red', 'Laterite', 'Sandy'] },
+            { id: 1, name: 'Water Facility', options: ['Well/Borewell', 'River/Canal', 'Rainwater', 'Tube Well', 'Pond/Tank'] },
+            { id: 2, name: 'Crop', options: ['Rice', 'Wheat', 'Maize', 'Sugarcane', 'Cotton', 'Vegetables'] },
+            { id: 3, name: 'Seed Type', options: ['Local', 'Hybrid', 'High-yield'] }
+        ];
+
+        // Map to store dropdown elements for easier access
+        const dropdowns = {};
+
+        let recognition = null;
+        let currentQuestionIndex = 0;
+        let selectedValues = {};
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.error('Speech Recognition API not supported in this browser');
+                return null;
+            }
+            return new SpeechRecognition();
+        }
+
+        // Log to console
+        function log(message, type = 'info') {
+            const consoleEl = document.getElementById('console');
+            const line = document.createElement('div');
+            line.className = `console-line console-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            line.textContent = `[${timestamp}] ${message}`;
+            
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        // Start voice input
+        function startVoiceInput(questionIndex) {
+            currentQuestionIndex = questionIndex;
+            
+            if (!recognition) {
+                recognition = initSpeechRecognition();
+                if (!recognition) {
+                    log('Speech Recognition not available', 'error');
+                    return;
+                }
+
+                // Configure recognition
+                recognition.language = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                // When speech is recognized
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    handleVoiceRecognition(transcript, questionIndex);
+                };
+
+                // Handle errors
+                recognition.onerror = (event) => {
+                    log(`Recognition error: ${event.error}`, 'error');
+                    updateStatus(questionIndex, `Error: ${event.error}`, 'error');
+                };
+
+                // When recognition ends
+                recognition.onend = () => {
+                    const voiceBtn = event.target;
+                    if (voiceBtn) voiceBtn.classList.remove('listening');
+                };
+            }
+
+            // Update button state
+            const voiceBtn = document.querySelector(`#question-${questionIndex} .btn-voice`);
+            voiceBtn.classList.add('listening');
+            voiceBtn.textContent = '🎤 Listening...';
+
+            // Update status
+            updateStatus(questionIndex, 'Listening for input...', 'listening');
+
+            // Start recognition
+            log(`Started listening for: ${questions[questionIndex].name}`, 'info');
+            recognition.start();
+        }
+
+        // Stop voice input
+        function stopVoiceInput() {
+            if (recognition) {
+                recognition.stop();
+                const voiceBtn = document.querySelector('.btn-voice.listening');
+                if (voiceBtn) {
+                    voiceBtn.classList.remove('listening');
+                    voiceBtn.textContent = '🎤 Start Listening';
+                }
+                log('Voice input stopped', 'info');
+            }
+        }
+
+        // Handle recognized speech
+        function handleVoiceRecognition(transcript, questionIndex) {
+            const lowerText = transcript.toLowerCase();
+            log(`Recognized text: "${transcript}"`, 'info');
+
+            // Get options for current question
+            const question = questions[questionIndex];
+            const options = question.options;
+
+            // Loop through options and match text
+            let matchedOption = null;
+            for (let option of options) {
+                const lowerOption = option.toLowerCase();
+                
+                // Try exact match
+                if (lowerText === lowerOption) {
+                    matchedOption = option;
+                    log(`✓ Exact match found: "${option}"`, 'success');
+                    break;
+                }
+                
+                // Try substring match
+                if (lowerText.includes(lowerOption) || lowerOption.includes(lowerText)) {
+                    matchedOption = option;
+                    log(`✓ Substring match found: "${option}"`, 'success');
+                    break;
+                }
+            }
+
+            if (matchedOption) {
+                // Get the dropdown element
+                const dropdown = document.getElementById(`dropdown-${questionIndex}`);
+                
+                if (!dropdown) {
+                    log(`✗ ERROR: Dropdown element not found (dropdown-${questionIndex})`, 'error');
+                    return;
+                }
+
+                log(`Setting dropdown value: "${matchedOption}"`, 'info');
+                
+                // Set the dropdown value
+                dropdown.value = matchedOption;
+                
+                // Verify value was set
+                if (dropdown.value === matchedOption) {
+                    log(`✓ Dropdown value confirmed: "${dropdown.value}"`, 'success');
+                } else {
+                    log(`✗ ERROR: Dropdown value not set! Expected "${matchedOption}", got "${dropdown.value}"`, 'error');
+                    return;
+                }
+
+                // Dispatch change event - Method 1: Standard Event
+                const changeEvent = new Event('change', { bubbles: true });
+                dropdown.dispatchEvent(changeEvent);
+                log(`✓ Change event dispatched (Method 1)`, 'success');
+
+                // Dispatch change event - Method 2: Direct onchange call
+                if (dropdown.onchange) {
+                    try {
+                        dropdown.onchange(changeEvent);
+                        log(`✓ Change event dispatched (Method 2 - direct)`, 'success');
+                    } catch (e) {
+                        log(`Note: Direct onchange call failed: ${e.message}`, 'info');
+                    }
+                }
+
+                // Update status
+                updateStatus(questionIndex, `✓ Selected: ${matchedOption}`, 'success');
+
+                // Reset voice button
+                const voiceBtn = document.querySelector(`#question-${questionIndex} .btn-voice`);
+                if (voiceBtn) {
+                    voiceBtn.classList.remove('listening');
+                    voiceBtn.textContent = '🎤 Start Listening';
+                }
+                
+                log(`===== Question ${questionIndex} Complete =====`, 'success');
+            } else {
+                log(`✗ No match found for: "${transcript}"`, 'error');
+                updateStatus(questionIndex, `No match for "${transcript}". Try again.`, 'error');
+            }
+        }
+
+        // Update status box
+        function updateStatus(questionIndex, message, type = 'info') {
+            const statusBox = document.getElementById(`status-${questionIndex}`);
+            statusBox.className = `status-box ${type}`;
+            statusBox.textContent = message;
+        }
+
+        // Handle dropdown change event
+        function handleDropdownChange(questionIndex) {
+            const dropdown = document.getElementById(`dropdown-${questionIndex}`);
+            const selectedValue = dropdown.value;
+
+            log(`EVENT: Dropdown change triggered for Q${questionIndex + 1}`, 'info');
+
+            if (selectedValue) {
+                selectedValues[questionIndex] = selectedValue;
+                log(`✓ Value saved: "${selectedValue}"`, 'success');
+
+                // Update progress indicator
+                updateProgressIndicator(questionIndex);
+
+                // Show next question
+                showNextQuestion(questionIndex);
+            } else {
+                log(`✗ No value selected in dropdown`, 'error');
+            }
+        }
+
+        // Show next question
+        function showNextQuestion(currentIndex) {
+            const nextIndex = currentIndex + 1;
+
+            if (nextIndex < questions.length) {
+                // Hide current question
+                document.getElementById(`question-${currentIndex}`).classList.remove('active');
+
+                // Show next question
+                document.getElementById(`question-${nextIndex}`).classList.add('active');
+
+                log(`Moving to next question (Q${nextIndex + 1}): ${questions[nextIndex].name}`, 'success');
+            } else {
+                // All questions answered
+                log(`All questions completed!`, 'success');
+                log(`Final selections: ${JSON.stringify(selectedValues)}`, 'success');
+                alert('✓ All questions completed!\n\n' + Object.entries(selectedValues)
+                    .map(([idx, val]) => `${questions[idx].name}: ${val}`)
+                    .join('\n'));
+            }
+        }
+
+        // Update progress indicator
+        function updateProgressIndicator(questionIndex) {
+            const dot = document.getElementById(`dot-${questionIndex}`);
+            dot.classList.add('completed');
+            
+            if (questionIndex + 1 < questions.length) {
+                document.getElementById(`dot-${questionIndex + 1}`).classList.add('active');
+            }
+        }
+
+        // Update debug info display
+        function updateDebugInfo() {
+            const debugEl = document.getElementById('debug-info');
+            let html = '';
+            for (let i = 0; i < questions.length; i++) {
+                const dropdown = document.getElementById(`dropdown-${i}`);
+                const value = dropdown ? dropdown.value : 'NOT FOUND';
+                const status = value ? '✓' : '○';
+                html += `${status} Q${i + 1}: "${value || 'empty'}"<br>`;
+            }
+            debugEl.innerHTML = html;
+        }
+
+        // Listen for all dropdown changes to update debug info
+        function attachDebugListeners() {
+            for (let i = 0; i < questions.length; i++) {
+                const dropdown = document.getElementById(`dropdown-${i}`);
+                if (dropdown) {
+                    dropdown.addEventListener('change', updateDebugInfo);
+                }
+            }
+            updateDebugInfo();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            // Cache all dropdown elements
+            for (let i = 0; i < questions.length; i++) {
+                dropdowns[i] = document.getElementById(`dropdown-${i}`);
+                if (!dropdowns[i]) {
+                    console.error(`Dropdown element not found: dropdown-${i}`);
+                }
+            }
+
+            log('Voice Input System initialized', 'success');
+            log(`Dropdowns cached: ${Object.keys(dropdowns).length}/${questions.length}`, 'success');
+            
+            const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+            log(`Browser Speech Recognition: ${SpeechAPI ? '✓ Supported' : '✗ Not Supported'}`, SpeechAPI ? 'success' : 'error');
+            
+            // Attach debug listeners
+            attachDebugListeners();
+            
+            log('Ready! Click "🎤 Start Listening" to begin', 'success');
+        });
+    </script>
+</body>
+</html>

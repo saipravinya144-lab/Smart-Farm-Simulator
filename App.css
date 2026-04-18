@@ -1,0 +1,347 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* App Layout */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.app-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 20px;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+/* Login Page */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.login-container {
+  text-align: center;
+  max-width: 500px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(34, 163, 97, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.language-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.language-card {
+  min-height: 70px;
+  min-width: auto;
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.language-card:hover,
+.language-card.selected {
+  border-color: #22a361;
+  background: rgba(34, 163, 97, 0.18);
+}
+
+.language-prompt {
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.language-switcher span {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+
+.language-switcher select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 0.95rem;
+  min-width: 150px;
+}
+
+.login-container h1 {
+  font-size: 2.8rem;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #22a361 0%, #7ed321 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.login-container p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 32px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22a361;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d8b4d;
+}
+
+/* Shared Components */
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(34, 163, 97, 0.3);
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(34, 163, 97, 0.6);
+  box-shadow: 0 12px 48px rgba(34, 163, 97, 0.15);
+}
+
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #22a361 0%, #1d8b4d 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(34, 163, 97, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #22a361;
+  border: 1px solid #22a361;
+}
+
+.btn-secondary:hover {
+  background: rgba(34, 163, 97, 0.2);
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.btn-large {
+  padding: 16px 48px;
+  font-size: 16px;
+  min-width: 280px;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #22a361;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group select,
+.form-group input {
+  padding: 12px 16px;
+  border: 1px solid rgba(34, 163, 97, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: #22a361;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(34, 163, 97, 0.1);
+}
+
+.form-group select option {
+  background: #1a1a2e;
+  color: white;
+}
+
+/* Typography */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #22a361 0%, #7ed321 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 16px;
+  color: #22a361;
+}
+
+h3 {
+  font-size: 1.2rem;
+  color: #22a361;
+  margin-bottom: 12px;
+}
+
+p {
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22a361 0%, #7ed321 100%);
+  transition: width 0.3s ease;
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-success {
+  background: rgba(34, 163, 97, 0.2);
+  color: #22a361;
+  border: 1px solid #22a361;
+}
+
+.badge-warning {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid #ffc107;
+}
+
+.badge-danger {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+  border: 1px solid #ff4757;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-content {
+    margin-left: 0;
+    padding: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  .btn-large {
+    min-width: auto;
+    width: 100%;
+  }
+}

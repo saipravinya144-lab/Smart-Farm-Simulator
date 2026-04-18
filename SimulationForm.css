@@ -1,0 +1,201 @@
+.simulation-form-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 40px 20px 20px;
+}
+
+.form-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.btn.listening {
+  border-color: #ffb86c;
+  background: rgba(255, 184, 108, 0.15);
+}
+
+.form-header p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.simulation-form {
+  margin-bottom: 24px;
+}
+
+.voice-mode-card {
+  padding: 20px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(34, 163, 97, 0.15);
+  border-radius: 16px;
+}
+
+.voice-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.voice-mode-row label {
+  font-weight: 700;
+  color: #22a361;
+}
+
+.voice-options {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.voice-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.voice-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voice-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.voice-status-row {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.voice-error {
+  color: #ff6b6b;
+}
+
+.btn.listening {
+  border-color: #ffb86c;
+  background: rgba(255, 184, 108, 0.15);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styles for SelectWithTooltip components in form-grid */
+.form-grid > .select-tooltip-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #22a361;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group select {
+  padding: 12px 16px;
+  border: 2px solid rgba(34, 163, 97, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: #22a361;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(34, 163, 97, 0.1);
+}
+
+.form-group select option {
+  background: #1a1a2e;
+  color: white;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(34, 163, 97, 0.2);
+}
+
+.form-tips {
+  margin-bottom: 32px;
+}
+
+.form-tips h3 {
+  margin-bottom: 16px;
+}
+
+.form-tips ul {
+  list-style: none;
+}
+
+.form-tips li {
+  padding: 10px 0;
+  padding-left: 24px;
+  position: relative;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.form-tips li:before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #22a361;
+  font-weight: bold;
+}
+
+.form-tips strong {
+  color: #22a361;
+}
+
+@media (max-width: 768px) {
+  .form-header h1 {
+    font-size: 2rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
